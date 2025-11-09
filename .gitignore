@@ -1,0 +1,13 @@
+node_modules/
+.env
+yeyi.env
+emilio.env
+logs/
+downloads/
+*.log
+.DS_Store
+*.pdf
+
+# OAuth2 tokens (contiene información sensible)
+gmail-token.json
+
