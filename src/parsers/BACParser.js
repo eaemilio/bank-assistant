@@ -1,5 +1,6 @@
 import { BankParser } from './BankParser.js';
 import { logger } from '../utils/logger.js';
+import { formatSpanishDateToISO } from '../utils/helpers.js';
 
 /**
  * Concrete Parser - BAC Credomatic (Guatemala)
@@ -66,10 +67,22 @@ export class BACParser extends BankParser {
     const lines = context.split('\n').filter(line => line.trim());
     
     if (lines[2]) {
-    const dateLine = lines[2].trim();
-    logger.info(`✓ Fecha de pago encontrada: ${dateLine}`);
-    return dateLine;
+      const dateLine = lines[2].trim();
+      logger.info(`✓ Fecha extraída del PDF: ${dateLine}`);
+      
+      // Convertir fecha con mes en español a formato ISO (YYYY-MM-DD)
+      const isoDate = formatSpanishDateToISO(dateLine);
+      
+      if (isoDate) {
+        logger.info(`✓ Fecha parseada correctamente: ${isoDate}`);
+        return isoDate;
+      } else {
+        logger.warn(`⚠️  No se pudo parsear la fecha: ${dateLine}`);
+        return dateLine; // Retornar la fecha original si no se puede parsear
+      }
     }
+    
+    return null;
   }
 
   extractPaymentAmounts(text) {

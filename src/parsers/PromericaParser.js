@@ -1,5 +1,6 @@
 import { BankParser } from './BankParser.js';
 import { logger } from '../utils/logger.js';
+import { formatSpanishDateToISO } from '../utils/helpers.js';
 
 /**
  * Concrete Parser - Banco Promerica (Guatemala)
@@ -42,13 +43,24 @@ export class PromericaParser extends BankParser {
       if (lines.length > 1) {
         const nextLine = lines[1];
         
-        // Buscar fecha en formato DD/MM/YYYY o DD-MM-YYYY
-        const datePattern = /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/;
+        // Buscar fecha en formato DD/MM/YYYY, DD-MM-YYYY o con meses en español
+        const datePattern = /(\d{1,2}[\/\-\s][A-Z]{3,10}[\/\-\s]\d{2,4})|(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i;
         const dateMatch = nextLine.match(datePattern);
         
         if (dateMatch) {
-          logger.info(`✓ Fecha de pago encontrada: ${dateMatch[1]}`);
-          return dateMatch[1];
+          const dateStr = dateMatch[1] || dateMatch[2];
+          logger.info(`✓ Fecha extraída del PDF: ${dateStr}`);
+          
+          // Convertir fecha con mes en español a formato ISO (YYYY-MM-DD)
+          const isoDate = formatSpanishDateToISO(dateStr);
+          
+          if (isoDate) {
+            logger.info(`✓ Fecha parseada correctamente: ${isoDate}`);
+            return isoDate;
+          } else {
+            logger.warn(`⚠️  No se pudo parsear la fecha: ${dateStr}`);
+            return dateStr; // Retornar la fecha original si no se puede parsear
+          }
         }
       }
     }

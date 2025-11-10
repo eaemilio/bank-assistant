@@ -1,5 +1,6 @@
 import { BankParser } from './BankParser.js';
 import { logger } from '../utils/logger.js';
+import { formatSpanishDateToISO } from '../utils/helpers.js';
 
 /**
  * Concrete Parser - Banco G&T Continental (Guatemala)
@@ -61,8 +62,18 @@ export class GTCParser extends BankParser {
       // La fecha está en la línea 9
       if (lines[9]) {
         const dateLine = lines[9].trim();
-        logger.info(`✓ Fecha de pago encontrada: ${dateLine}`);
-        return dateLine;
+        logger.info(`✓ Fecha extraída del PDF: ${dateLine}`);
+        
+        // Convertir fecha con mes en español a formato ISO (YYYY-MM-DD)
+        const isoDate = formatSpanishDateToISO(dateLine);
+        
+        if (isoDate) {
+          logger.info(`✓ Fecha parseada correctamente: ${isoDate}`);
+          return isoDate;
+        } else {
+          logger.warn(`⚠️  No se pudo parsear la fecha: ${dateLine}`);
+          return dateLine; // Retornar la fecha original si no se puede parsear
+        }
       }
     }
     

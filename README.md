@@ -2,6 +2,16 @@
 
 Sistema automatizado para procesar estados de cuenta de tarjetas de crédito recibidos por correo electrónico. El sistema monitorea tu bandeja de entrada, extrae los PDFs de estados de cuenta y encuentra automáticamente la información de pago de contado.
 
+## 🌟 Modos de Operación
+
+### 🖥️ Modo Local
+Ejecuta el sistema continuamente en tu computadora. Ideal para pruebas y desarrollo.
+
+### ☁️ Modo Cloud (AWS Lambda)
+Ejecuta el sistema automáticamente en la nube sin mantener servidores. **¡GRATIS!** ($0/mes usando el free tier de AWS)
+
+**[→ Desplegar a AWS Lambda en 5 minutos](AWS_LAMBDA_QUICKSTART.md)**
+
 ## 🎯 Características
 
 - ✉️ **Monitoreo automático de correos** - Revisa tu bandeja de entrada periódicamente
@@ -19,6 +29,7 @@ Sistema automatizado para procesar estados de cuenta de tarjetas de crédito rec
 - 💱 **Soporte multi-moneda** - MXN, USD, GTQ y más
 - 🏦 **Sistema modular por banco** - Detección automática y estrategias específicas por banco
 - 🎨 **Abstract Factory Pattern** - Arquitectura profesional y escalable
+- ☁️ **Despliegue en la nube** - Soporte completo para AWS Lambda (serverless)
 
 ## 📋 Requisitos Previos
 
@@ -27,7 +38,24 @@ Sistema automatizado para procesar estados de cuenta de tarjetas de crédito rec
 - Estados de cuenta bancarios en formato PDF
 - (Opcional) Cuenta de Notion para guardar datos automáticamente
 
-## 🚀 Instalación
+## 🚀 Inicio Rápido
+
+### Opción 1: AWS Lambda (Recomendado para Producción) ☁️
+
+**¿Por qué AWS Lambda?**
+- ✅ Gratis (free tier de AWS)
+- ✅ Sin mantenimiento de servidores
+- ✅ Altamente disponible
+- ✅ Logs centralizados
+
+**Guías disponibles:**
+- 📖 [Guía Rápida de 5 minutos](AWS_LAMBDA_QUICKSTART.md) - Empezar ahora
+- 🔐 [Configurar Usuario IAM](AWS_IAM_SETUP.md) - Permisos necesarios
+- 📚 [Guía Completa de Despliegue](DEPLOYMENT.md) - Documentación detallada
+
+### Opción 2: Ejecución Local 🖥️
+
+## 🚀 Instalación Local
 
 1. **Clonar o descargar el proyecto**
 

@@ -10,7 +10,15 @@
     "test": "node --test",
     "check": "node src/test-config.js",
     "test:notion": "node src/test-notion.js",
-    "setup-oauth": "node src/setup-oauth.js"
+    "setup-oauth": "node src/setup-oauth.js",
+    "setup-oauth-ssm": "node src/setup-oauth-ssm.js",
+    "lambda:invoke": "node src/lambda.js",
+    "lambda:deploy": "cd infrastructure && pwsh -File deploy.ps1",
+    "lambda:deploy:bash": "cd infrastructure && bash deploy.sh",
+    "lambda:check": "cd infrastructure && pwsh -File test-prerequisites.ps1",
+    "lambda:logs": "aws logs tail /aws/lambda/bank-statement-processor --follow",
+    "lambda:test": "aws lambda invoke --function-name bank-statement-processor response.json && type response.json",
+    "lambda:test:bash": "aws lambda invoke --function-name bank-statement-processor response.json && cat response.json"
   },
   "keywords": [
     "bank",
@@ -22,6 +30,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-ssm": "^3.927.0",
     "@notionhq/client": "^5.3.0",
     "dotenv": "^16.4.5",
     "googleapis": "^165.0.0",

@@ -11,3 +11,12 @@ downloads/
 # OAuth2 tokens (contiene información sensible)
 gmail-token.json
 
+# AWS SAM artifacts
+.aws-sam/
+samconfig.toml
+response.json
+
+# Infrastructure
+infrastructure/.aws-sam/
+infrastructure/.env.lambda
+

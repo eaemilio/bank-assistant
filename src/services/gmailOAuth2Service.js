@@ -4,22 +4,33 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { SSMTokenService } from './ssmTokenService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 /**
  * Servicio para manejar autenticación OAuth2 de Gmail
+ * Soporta tanto almacenamiento local (archivo) como AWS SSM Parameter Store
  */
 export class GmailOAuth2Service {
-  constructor(clientId, clientSecret, redirectUri) {
+  constructor(clientId, clientSecret, redirectUri, useSSM = false) {
     this.oauth2Client = new google.auth.OAuth2(
       clientId,
       clientSecret,
       redirectUri
     );
     
-    this.tokenPath = path.join(process.cwd(), 'gmail-token.json');
+    // Determinar si usar SSM basado en variable de entorno o parámetro
+    this.useSSM = useSSM || process.env.USE_AWS_SSM === 'true' || process.env.AWS_EXECUTION_ENV !== undefined;
+    
+    if (this.useSSM) {
+      logger.info('Usando AWS SSM Parameter Store para tokens');
+      this.tokenService = new SSMTokenService();
+    } else {
+      logger.info('Usando sistema de archivos local para tokens');
+      this.tokenPath = path.join(process.cwd(), 'gmail-token.json');
+    }
   }
 
   /**
@@ -57,19 +68,31 @@ export class GmailOAuth2Service {
   }
 
   /**
-   * Carga los tokens guardados del archivo
+   * Carga los tokens guardados (desde SSM o archivo local)
    */
   async loadToken() {
     try {
-      if (!fs.existsSync(this.tokenPath)) {
+      let tokens;
+      
+      if (this.useSSM) {
+        // Cargar desde AWS SSM
+        tokens = await this.tokenService.loadToken();
+      } else {
+        // Cargar desde archivo local
+        if (!fs.existsSync(this.tokenPath)) {
+          return null;
+        }
+        const tokenData = fs.readFileSync(this.tokenPath, 'utf8');
+        tokens = JSON.parse(tokenData);
+      }
+      
+      if (!tokens) {
         return null;
       }
-
-      const tokenData = fs.readFileSync(this.tokenPath, 'utf8');
-      const tokens = JSON.parse(tokenData);
       
       this.oauth2Client.setCredentials(tokens);
-      logger.info('Tokens de OAuth2 cargados desde archivo');
+      const source = this.useSSM ? 'AWS SSM' : 'archivo local';
+      logger.info(`Tokens de OAuth2 cargados desde ${source}`);
       
       return tokens;
     } catch (error) {
@@ -79,12 +102,18 @@ export class GmailOAuth2Service {
   }
 
   /**
-   * Guarda los tokens en un archivo
+   * Guarda los tokens (en SSM o archivo local)
    */
   async saveToken(tokens) {
     try {
-      fs.writeFileSync(this.tokenPath, JSON.stringify(tokens, null, 2));
-      logger.info('Tokens guardados en:', this.tokenPath);
+      if (this.useSSM) {
+        // Guardar en AWS SSM
+        await this.tokenService.saveToken(tokens);
+      } else {
+        // Guardar en archivo local
+        fs.writeFileSync(this.tokenPath, JSON.stringify(tokens, null, 2));
+        logger.info('Tokens guardados en:', this.tokenPath);
+      }
     } catch (error) {
       logger.error('Error al guardar tokens:', error);
       throw error;
@@ -159,17 +188,23 @@ export class GmailOAuth2Service {
   /**
    * Verifica si ya existe un token válido
    */
-  hasValidToken() {
+  async hasValidToken() {
     try {
-      if (!fs.existsSync(this.tokenPath)) {
-        return false;
-      }
+      if (this.useSSM) {
+        // Verificar en AWS SSM
+        return await this.tokenService.hasValidToken();
+      } else {
+        // Verificar en archivo local
+        if (!fs.existsSync(this.tokenPath)) {
+          return false;
+        }
 
-      const tokenData = fs.readFileSync(this.tokenPath, 'utf8');
-      const tokens = JSON.parse(tokenData);
-      
-      // Verificar que tenga al menos un refresh_token
-      return !!tokens.refresh_token;
+        const tokenData = fs.readFileSync(this.tokenPath, 'utf8');
+        const tokens = JSON.parse(tokenData);
+        
+        // Verificar que tenga al menos un refresh_token
+        return !!tokens.refresh_token;
+      }
     } catch (error) {
       return false;
     }

@@ -1,5 +1,6 @@
 import { BankParser } from './BankParser.js';
 import { logger } from '../utils/logger.js';
+import { parseSpanishDate } from '../utils/helpers.js';
 
 /**
  * Concrete Parser - Banco Industrial (Guatemala)
@@ -48,7 +49,7 @@ export class BIParser extends BankParser {
    * Busca "Fecha de Pago", luego 4 líneas después está el año, 
    * una línea después el mes, una línea después el día
    * @param {string} text - Texto del PDF
-   * @returns {string|null} Fecha de pago en formato DD/MM/YYYY
+   * @returns {string|null} Fecha de pago en formato ISO (YYYY-MM-DD)
    */
   extractPaymentDate(text) {
     const index = text.indexOf('Fecha de pago:');
@@ -74,13 +75,19 @@ export class BIParser extends BankParser {
       const day = lines[6]?.trim();
       
       if (year && month && day) {
-        // Asegurarse de que mes y día tengan 2 dígitos
+        // Construir fecha en formato ISO (YYYY-MM-DD)
         const monthPadded = month.padStart(2, '0');
         const dayPadded = day.padStart(2, '0');
-        const dateStr = `${dayPadded}/${monthPadded}/${year}`;
+        const isoDate = `${year}-${monthPadded}-${dayPadded}`;
         
-        logger.info(`✓ Fecha de pago encontrada: ${dateStr}`);
-        return dateStr;
+        // Validar la fecha usando parseSpanishDate
+        const dateObj = parseSpanishDate(isoDate);
+        if (dateObj) {
+          logger.info(`✓ Fecha de pago encontrada: ${isoDate}`);
+          return isoDate;
+        } else {
+          logger.warn(`⚠️  Fecha inválida: ${isoDate}`);
+        }
       } else {
         logger.warn(`⚠️  Fecha incompleta - Año: ${year}, Mes: ${month}, Día: ${day}`);
       }

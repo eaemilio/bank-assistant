@@ -1,0 +1,149 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Bank Statement Automation - Serverless Lambda Function'
+
+Globals:
+  Function:
+    Timeout: 300
+    MemorySize: 512
+    Runtime: nodejs20.x
+    Architectures:
+      - x86_64
+
+Parameters:
+  EmailUser:
+    Type: String
+    Description: Gmail account email address
+    NoEcho: false
+  
+  UseOAuth2:
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Use OAuth2 authentication (recommended)
+  
+  GmailOAuth2ClientId:
+    Type: String
+    Description: Gmail OAuth2 Client ID from Google Cloud Console
+    NoEcho: true
+  
+  GmailOAuth2ClientSecret:
+    Type: String
+    Description: Gmail OAuth2 Client Secret from Google Cloud Console
+    NoEcho: true
+  
+  BankEmailSenders:
+    Type: String
+    Description: Comma-separated list of bank email senders
+  
+  EmailSubjectKeywords:
+    Type: String
+    Default: 'estado de cuenta,state,tarjeta de credito'
+    Description: Comma-separated keywords to identify bank statements
+  
+  NotionApiKey:
+    Type: String
+    Description: Notion API Key (starts with secret_)
+    NoEcho: true
+  
+  NotionDatabaseId:
+    Type: String
+    Description: Notion Database ID
+    NoEcho: true
+  
+  ScheduleExpression:
+    Type: String
+    Default: 'cron(0 * * * ? *)'
+    Description: EventBridge schedule expression (default every hour)
+
+Resources:
+  BankStatementFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: bank-statement-processor
+      CodeUri: ../
+      Handler: src/lambda.handler
+      Description: Process bank statements from email and save to Notion
+      Environment:
+        Variables:
+          EMAIL_USER: !Ref EmailUser
+          EMAIL_HOST: imap.gmail.com
+          EMAIL_PORT: '993'
+          EMAIL_TLS: 'true'
+          EMAIL_FOLDER: INBOX
+          USE_OAUTH2: !Ref UseOAuth2
+          GMAIL_OAUTH2_CLIENT_ID: !Ref GmailOAuth2ClientId
+          GMAIL_OAUTH2_CLIENT_SECRET: !Ref GmailOAuth2ClientSecret
+          GMAIL_OAUTH2_REDIRECT_URI: http://localhost
+          BANK_EMAIL_SENDERS: !Ref BankEmailSenders
+          EMAIL_SUBJECT_KEYWORDS: !Ref EmailSubjectKeywords
+          NOTION_API_KEY: !Ref NotionApiKey
+          NOTION_DATABASE_ID: !Ref NotionDatabaseId
+          CHECK_INTERVAL_MINUTES: '60'
+          LOG_LEVEL: info
+          USE_AWS_SSM: 'true'
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - ssm:GetParameter
+                - ssm:PutParameter
+              Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/bank-assistant/*'
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bank-statement-processor:*'
+      Events:
+        HourlySchedule:
+          Type: Schedule
+          Properties:
+            Schedule: !Ref ScheduleExpression
+            Description: Trigger bank statement processing every hour
+            Enabled: true
+
+  BankStatementLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/bank-statement-processor
+      RetentionInDays: 30
+
+  # SSM Parameter for Gmail Token (created empty, needs to be populated)
+  GmailTokenParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /bank-assistant/gmail-token
+      Description: Gmail OAuth2 token for bank assistant
+      Type: String
+      Value: '{"placeholder": "Configure this after deployment with npm run setup-oauth-ssm"}'
+      Tier: Standard
+
+Outputs:
+  BankStatementFunctionArn:
+    Description: Bank Statement Lambda Function ARN
+    Value: !GetAtt BankStatementFunction.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-FunctionArn'
+  
+  BankStatementFunctionName:
+    Description: Bank Statement Lambda Function Name
+    Value: !Ref BankStatementFunction
+    Export:
+      Name: !Sub '${AWS::StackName}-FunctionName'
+  
+  LogGroupName:
+    Description: CloudWatch Logs Group Name
+    Value: !Ref BankStatementLogGroup
+    Export:
+      Name: !Sub '${AWS::StackName}-LogGroup'
+  
+  GmailTokenParameterName:
+    Description: SSM Parameter name for Gmail token
+    Value: !Ref GmailTokenParameter
+    Export:
+      Name: !Sub '${AWS::StackName}-TokenParameter'
+

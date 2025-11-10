@@ -2,14 +2,6 @@
 
 Esta guía te ayudará a configurar OAuth2 para acceder a Gmail sin necesidad de contraseñas de aplicación.
 
-## ¿Por qué OAuth2?
-
-OAuth2 es **necesario** si:
-- ✅ Tu cuenta de Google **no tiene** acceso a "Contraseñas de aplicaciones"
-- ✅ Usas una cuenta de Google Workspace con restricciones
-- ✅ Quieres una autenticación más segura
-- ✅ Recibes el mensaje: "La opción de configuración que buscas no está disponible para tu cuenta"
-
 ---
 
 ## 📋 Pasos de Configuración
@@ -322,22 +314,6 @@ Si sigues teniendo problemas:
 4. **Vuelve a intentar:**
    - Elimina `gmail-token.json`
    - Ejecuta `npm run setup-oauth`
-
----
-
-## ✅ Checklist Final
-
-Antes de ejecutar `npm start`, verifica que:
-
-- ✅ Creaste un proyecto en Google Cloud Console
-- ✅ Habilitaste la Gmail API
-- ✅ Configuraste la pantalla de consentimiento OAuth
-- ✅ Te agregaste como usuario de prueba
-- ✅ Creaste credenciales OAuth 2.0 (tipo: Aplicación de escritorio)
-- ✅ Configuraste las credenciales en tu archivo `.env`
-- ✅ `USE_OAUTH2=true` en tu `.env`
-- ✅ Ejecutaste `npm run setup-oauth` y autorizaste la app
-- ✅ Existe el archivo `gmail-token.json` en tu proyecto
 
 ---
 

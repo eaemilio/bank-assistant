@@ -5,9 +5,12 @@ import { config } from '../config/config.js';
 import { logger } from '../utils/logger.js';
 
 export class PDFService {
-  constructor() {
-    // Crear carpeta de descargas si no existe
-    if (!existsSync(config.app.downloadFolder)) {
+  constructor(saveFiles = true) {
+    this.saveFiles = saveFiles;
+    
+    // Solo crear carpeta si vamos a guardar archivos (modo local)
+    // En Lambda, no necesitamos guardar archivos
+    if (this.saveFiles && !existsSync(config.app.downloadFolder)) {
       mkdirSync(config.app.downloadFolder, { recursive: true });
     }
   }
@@ -15,7 +18,7 @@ export class PDFService {
   /**
    * Extraer PDFs de los adjuntos de un correo
    * @param {Array} attachments - Adjuntos del correo
-   * @returns {Array} Lista de PDFs guardados con su ruta
+   * @returns {Array} Lista de PDFs con su contenido (guardados en disco solo si saveFiles=true)
    */
   async extractPDFs(attachments) {
     if (!attachments || attachments.length === 0) {
@@ -32,7 +35,17 @@ export class PDFService {
         try {
           const timestamp = Date.now();
           const filename = `${timestamp}_${attachment.filename || 'estado_cuenta.pdf'}`;
-          const filepath = join(config.app.downloadFolder, filename);
+          
+          // Solo guardar en disco si saveFiles está habilitado (modo local)
+          let filepath = null;
+          if (this.saveFiles) {
+            filepath = join(config.app.downloadFolder, filename);
+            // Aquí se guardaría el archivo si fuera necesario
+            // Por ahora solo registramos la ruta
+            logger.debug(`PDF se guardaría en: ${filepath}`);
+          } else {
+            logger.debug(`Modo Lambda: PDF no se guardará en disco (${filename})`);
+          }
 
           pdfFiles.push({
             filename,
@@ -40,7 +53,7 @@ export class PDFService {
             content: attachment.content,
           });
         } catch (error) {
-          logger.error(`Error al guardar PDF ${attachment.filename}:`, error);
+          logger.error(`Error al procesar PDF ${attachment.filename}:`, error);
         }
       }
     }
