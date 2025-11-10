@@ -1,13 +1,13 @@
-# ⚡ AWS Lambda
-## 📋 Prerequisites (5 minutos)
-### 1. Instalar AWS CLI y SAM CLI
+# AWS Lambda
+## Prerequisites (5 minutes)
+### 1. Install AWS CLI and SAM CLI
 
-**Windows (PowerShell como Administrador):**
+**Windows (PowerShell as Administrator):**
 ```powershell
-# Instalar Chocolatey si no lo tienes
+# Install Chocolatey if you don't have it
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-# Instalar AWS CLI y SAM CLI
+# Install AWS CLI and SAM CLI
 choco install awscli awssamcli -y
 ```
 
@@ -28,137 +28,137 @@ unzip aws-sam-cli-linux-x86_64.zip -d sam-installation
 sudo ./sam-installation/install
 ```
 
-### 2. Configurar AWS
+### 2. Configure AWS
 
-**Primera vez con AWS?** → [Sigue la guía completa para crear usuario IAM](AWS_IAM_SETUP.md)
+**First time with AWS?** → [Follow the complete guide to create IAM user](AWS_IAM_SETUP.md)
 
 ```bash
 aws configure
 ```
 
-Proporciona:
-- **AWS Access Key ID**: (obtén de IAM en AWS Console)
-- **AWS Secret Access Key**: (obtén junto con el Access Key)
+Provide:
+- **AWS Access Key ID**: (get from IAM in AWS Console)
+- **AWS Secret Access Key**: (get along with Access Key)
 - **Default region**: `us-east-1`
 - **Default output format**: `json`
 
-**Permisos necesarios**: El usuario debe tener permisos para Lambda, CloudFormation, EventBridge, SSM, CloudWatch y S3.
+**Required permissions**: The user must have permissions for Lambda, CloudFormation, EventBridge, SSM, CloudWatch and S3.
 
-## 🚀 Despliegue
+## Deployment
 
-### Paso 1: Obtener Token OAuth2 Localmente
+### Step 1: Get OAuth2 Token Locally
 
 ```bash
-# Ya debes tener configurado OAuth2 localmente
-# Si no, ejecuta:
+# You should already have OAuth2 configured locally
+# If not, run:
 npm run setup-oauth
 ```
 
-Esto crea `gmail-token.json` con tus credenciales.
+This creates `gmail-token.json` with your credentials.
 
-### Paso 2: Configurar Variables para Lambda
+### Step 2: Configure Variables for Lambda
 
 ```bash
-# Copiar template
+# Copy template
 cp .env.lambda.example .env.lambda
 
-# Editar con tus valores
+# Edit with your values
 # Windows: notepad .env.lambda
 # Mac/Linux: nano .env.lambda
 ```
 
-Configura mínimo:
+Configure at minimum:
 ```bash
-EMAIL_USER=tu_email@gmail.com
-GMAIL_OAUTH2_CLIENT_ID=tu_client_id
-GMAIL_OAUTH2_CLIENT_SECRET=tu_client_secret
-BANK_EMAIL_SENDERS=email1@banco.com,email2@banco.com
+EMAIL_USER=your_email@gmail.com
+GMAIL_OAUTH2_CLIENT_ID=your_client_id
+GMAIL_OAUTH2_CLIENT_SECRET=your_client_secret
+BANK_EMAIL_SENDERS=email1@bank.com,email2@bank.com
 NOTION_API_KEY=secret_xxx
 NOTION_DATABASE_ID=xxx
 ```
 
-### Paso 3: Instalar Dependencia AWS
+### Step 3: Install AWS Dependency
 
 ```bash
 npm install @aws-sdk/client-ssm
 ```
 
-### Paso 4: Desplegar a AWS
+### Step 4: Deploy to AWS
 
 ```powershell
-# Windows PowerShell (recomendado)
+# Windows PowerShell (recommended)
 npm run lambda:deploy
 ```
 
 ```bash
-# Si prefieres usar Git Bash o WSL
+# If you prefer to use Git Bash or WSL
 npm run lambda:deploy:bash
 ```
 
-El script automáticamente:
-- ✅ Verifica prerequisites
-- ✅ Crea infraestructura en AWS
-- ✅ Despliega la función Lambda
-- ✅ Configura el schedule (cada hora)
+The script automatically:
+- Verifies prerequisites
+- Creates infrastructure in AWS
+- Deploys the Lambda function
+- Configures the schedule (every hour)
 
-### Paso 5: Subir Token a AWS
+### Step 5: Upload Token to AWS
 
 ```bash
 npm run setup-oauth-ssm
 ```
 
-## ✅ Verificación
+## Verification
 
-### Probar Manualmente
+### Test Manually
 
 ```bash
 npm run lambda:test
 ```
 
-Deberías ver:
+You should see:
 ```json
 {
   "statusCode": 200,
-  "body": "{\"message\":\"Procesamiento completado\",\"emailsProcessed\":0,...}"
+  "body": "{\"message\":\"Processing completed\",\"emailsProcessed\":0,...}"
 }
 ```
 
-### Ver Logs
+### View Logs
 
 ```bash
 npm run lambda:logs
 ```
 
-## ⚙️ Configuración del Schedule
+## Schedule Configuration
 
-Por defecto se ejecuta **cada hora**. Para cambiar:
+By default it runs **every hour**. To change:
 
-1. Edita `infrastructure/template.yaml`
-2. Cambia el `ScheduleExpression`:
+1. Edit `infrastructure/template.yaml`
+2. Change the `ScheduleExpression`:
 
 ```yaml
-# Cada 3 horas
+# Every 3 hours
 ScheduleExpression: 'cron(0 */3 * * ? *)'
 
-# Cada día a las 8am
+# Every day at 8am
 ScheduleExpression: 'cron(0 8 * * ? *)'
 
-# Cada 30 minutos
+# Every 30 minutes
 ScheduleExpression: 'cron(*/30 * * * ? *)'
 ```
 
-3. Redesplegar: `npm run lambda:deploy`
+3. Redeploy: `npm run lambda:deploy`
 
-## 🐛 Problemas Comunes
+## Common Problems
 
-### "Access Denied" en deployment
+### "Access Denied" during deployment
 
 ```bash
-# Verifica que tu usuario AWS tenga permisos
+# Verify that your AWS user has permissions
 aws sts get-caller-identity
 ```
 
-Tu usuario necesita permisos para:
+Your user needs permissions for:
 - Lambda
 - CloudFormation
 - IAM
@@ -166,23 +166,22 @@ Tu usuario necesita permisos para:
 - S3
 - SSM
 
-### "Token expired" en Lambda
+### "Token expired" in Lambda
 
 ```bash
-# Obtener nuevo token localmente
+# Get new token locally
 npm run setup-oauth
 
-# Subirlo a AWS
+# Upload it to AWS
 npm run setup-oauth-ssm
 ```
 
-## 🗑️ Eliminar Todo
-Si necesitas eliminar la infraestructura:
+## Delete Everything
+If you need to delete the infrastructure:
 ```bash
-# Eliminar stack de CloudFormation
+# Delete CloudFormation stack
 aws cloudformation delete-stack --stack-name bank-statement-automation
 
-# Eliminar token de SSM
+# Delete token from SSM
 aws ssm delete-parameter --name "/bank-assistant/gmail-token"
 ```
-

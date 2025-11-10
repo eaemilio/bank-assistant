@@ -1,143 +1,143 @@
-# 🚀 Guía de Configuración Rápida
+# Quick Setup Guide
 
-## Paso 1: Instalar Node.js
+## Step 1: Install Node.js
 
-1. Descarga Node.js desde: https://nodejs.org/
-2. Instala la versión LTS (Long Term Support)
-3. Verifica la instalación:
+1. Download Node.js from: https://nodejs.org/
+2. Install the LTS version (Long Term Support)
+3. Verify the installation:
 
 ```bash
 node --version
 npm --version
 ```
 
-## Paso 2: Configurar el Proyecto
+## Step 2: Configure the Project
 
-1. Abre la terminal en la carpeta del proyecto
-2. Instala las dependencias:
+1. Open the terminal in the project folder
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-## Paso 3: Configurar Gmail (si usas Gmail)
+## Step 3: Configure Gmail (if using Gmail)
 
-### Habilitar IMAP
+### Enable IMAP
 
-1. Abre Gmail
-2. Click en ⚙️ (Configuración) → "Ver toda la configuración"
-3. Pestaña "Reenvío y correo POP/IMAP"
-4. Selecciona "Habilitar IMAP"
-5. Guarda cambios
+1. Open Gmail
+2. Click on (Settings) → "See all settings"
+3. "Forwarding and POP/IMAP" tab
+4. Select "Enable IMAP"
+5. Save changes
 
-### Crear Contraseña de Aplicación
+### Create App Password
 
-**Importante:** Gmail requiere verificación en dos pasos para usar contraseñas de aplicación
+**Important:** Gmail requires 2-Step Verification to use app passwords
 
-1. Ve a https://myaccount.google.com/security
-2. Activa "Verificación en dos pasos" (si no está activa)
-3. Busca "Contraseñas de aplicaciones"
-4. Selecciona:
-   - Aplicación: "Correo"
-   - Dispositivo: "Otro (nombre personalizado)" → escribe "Bank Assistant"
-5. Copia la contraseña de 16 caracteres (sin espacios)
+1. Go to https://myaccount.google.com/security
+2. Activate "2-Step Verification" (if not already active)
+3. Search for "App passwords"
+4. Select:
+   - App: "Mail"
+   - Device: "Other (custom name)" → type "Bank Assistant"
+5. Copy the 16-character password (without spaces)
 
-## Paso 4: Identificar el Correo de tu Banco
+## Step 4: Identify Your Bank's Email
 
-1. Abre un correo de estado de cuenta de tu banco
-2. Mira la dirección de correo del remitente
+1. Open a bank statement email from your bank
+2. Look at the sender's email address
 
-Ejemplos comunes:
-- BBVA: `notificaciones@bbva.com`
-- Santander: `estadodecuenta@santander.com.mx`
-- Banamex: `notificaciones@banamex.com`
-- HSBC: `estadodecuenta@hsbc.com.mx`
+Common examples:
+- BBVA: `notifications@bbva.com`
+- Santander: `statement@santander.com.mx`
+- Banamex: `notifications@banamex.com`
+- HSBC: `statement@hsbc.com.mx`
 
-## Paso 5: Crear Archivo de Configuración
+## Step 5: Create Configuration File
 
-1. En la carpeta del proyecto, crea un archivo llamado `.env`
-2. Copia este contenido y completa con tus datos:
+1. In the project folder, create a file named `.env`
+2. Copy this content and fill in with your data:
 
 ```env
-# TU CORREO
-EMAIL_USER=tu_email@gmail.com
+# YOUR EMAIL
+EMAIL_USER=your_email@gmail.com
 
-# LA CONTRASEÑA DE APLICACIÓN DE 16 CARACTERES
+# THE 16-CHARACTER APP PASSWORD
 EMAIL_PASSWORD=aaaa bbbb cccc dddd
 
-# SERVIDOR DE CORREO (Gmail por defecto)
+# EMAIL SERVER (Gmail by default)
 EMAIL_HOST=imap.gmail.com
 EMAIL_PORT=993
 EMAIL_TLS=true
 
-# CARPETA DE CORREO
+# EMAIL FOLDER
 EMAIL_FOLDER=INBOX
 
-# CORREO DE TU BANCO
-BANK_EMAIL_SENDER=notificaciones@banco.com
+# YOUR BANK'S EMAIL
+BANK_EMAIL_SENDER=notifications@bank.com
 
-# PALABRAS CLAVE EN EL ASUNTO DEL CORREO
-EMAIL_SUBJECT_KEYWORDS=estado de cuenta,tarjeta
+# KEYWORDS IN EMAIL SUBJECT
+EMAIL_SUBJECT_KEYWORDS=statement,card
 
-# REVISAR CADA 5 MINUTOS
+# CHECK EVERY 5 MINUTES
 CHECK_INTERVAL_MINUTES=5
 
-# CARPETAS
+# FOLDERS
 DOWNLOAD_FOLDER=./downloads
 LOG_FOLDER=./logs
 
-# NIVEL DE LOG
+# LOG LEVEL
 LOG_LEVEL=info
 ```
 
-## Paso 6: Probar la Conexión
+## Step 6: Test the Connection
 
-Ejecuta el programa:
+Run the program:
 
 ```bash
 npm start
 ```
 
-Deberías ver:
+You should see:
 
 ```
-🏦 Sistema de Automatización de Estados de Cuenta Bancarios
-✅ Configuración validada correctamente
-📧 Monitoreando: tu_email@gmail.com
-🏦 Banco: notificaciones@banco.com
-✅ Sistema iniciado correctamente
+Bank Statement Automation System
+Configuration validated successfully
+Monitoring: your_email@gmail.com
+Bank: notifications@bank.com
+System started successfully
 ```
 
-## ⚠️ Problemas Comunes
+## Common Problems
 
 ### Error: "Invalid credentials"
 
-**Causa:** Usuario o contraseña incorrectos
+**Cause:** Incorrect username or password
 
-**Solución:**
-- Verifica tu email en `EMAIL_USER`
-- Verifica que uses la contraseña de aplicación (16 caracteres)
-- NO uses tu contraseña normal de Gmail
+**Solution:**
+- Verify your email in `EMAIL_USER`
+- Verify that you use the app password (16 characters)
+- DO NOT use your normal Gmail password
 
 ### Error: "Configuration incomplete"
 
-**Causa:** Falta información en el archivo `.env`
+**Cause:** Missing information in the `.env` file
 
-**Solución:**
-- Verifica que el archivo se llame exactamente `.env` (con el punto al inicio)
-- Verifica que todas las variables estén configuradas
-- No dejes espacios antes o después del `=`
+**Solution:**
+- Verify that the file is named exactly `.env` (with the dot at the beginning)
+- Verify that all variables are configured
+- Don't leave spaces before or after the `=`
 
-### No encuentra correos
+### Doesn't find emails
 
-**Causa:** Configuración incorrecta del banco o palabras clave
+**Cause:** Incorrect bank or keyword configuration
 
-**Solución:**
-- Verifica que `BANK_EMAIL_SENDER` sea exactamente el correo del banco
-- Ajusta `EMAIL_SUBJECT_KEYWORDS` con palabras que aparezcan en el asunto
-- Verifica que tengas correos no leídos del banco en tu bandeja
+**Solution:**
+- Verify that `BANK_EMAIL_SENDER` is exactly the bank's email
+- Adjust `EMAIL_SUBJECT_KEYWORDS` with words that appear in the subject
+- Verify that you have unread emails from the bank in your inbox
 
-## 📧 Configuración para Otros Proveedores
+## Configuration for Other Providers
 
 ### Outlook/Hotmail
 
@@ -155,23 +155,22 @@ EMAIL_PORT=993
 EMAIL_TLS=true
 ```
 
-⚠️ **Nota:** Estos proveedores también pueden requerir contraseñas de aplicación
+**Note:** These providers may also require app passwords
 
-## ✅ Siguiente Paso
+## Next Step
 
-Una vez que veas que el sistema se conecta correctamente:
+Once you see that the system connects successfully:
 
-1. Envíate un correo de prueba con un PDF adjunto
-2. O espera a que llegue tu próximo estado de cuenta
-3. El sistema lo detectará automáticamente y lo procesará
+1. Send yourself a test email with an attached PDF
+2. Or wait for your next bank statement to arrive
+3. The system will detect it automatically and process it
 
-## 🆘 ¿Necesitas Ayuda?
+## Need Help?
 
-Revisa el archivo `logs/combined.log` para ver información detallada sobre lo que está sucediendo.
+Check the `logs/combined.log` file to see detailed information about what's happening.
 
-Para ver más logs en la consola, cambia en `.env`:
+To see more logs in the console, change in `.env`:
 
 ```env
 LOG_LEVEL=debug
 ```
-

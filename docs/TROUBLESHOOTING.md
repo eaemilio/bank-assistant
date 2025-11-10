@@ -1,95 +1,95 @@
-# 🔧 Guía de Solución de Problemas
+# Troubleshooting Guide
 
-## Tabla de Contenidos
-- [Problemas de Instalación](#problemas-de-instalación)
-- [Problemas de Configuración](#problemas-de-configuración)
-- [Problemas de Conexión](#problemas-de-conexión)
-- [Problemas de Procesamiento](#problemas-de-procesamiento)
-- [Problemas de Performance](#problemas-de-performance)
-- [Herramientas de Diagnóstico](#herramientas-de-diagnóstico)
+## Table of Contents
+- [Installation Problems](#installation-problems)
+- [Configuration Problems](#configuration-problems)
+- [Connection Problems](#connection-problems)
+- [Processing Problems](#processing-problems)
+- [Performance Problems](#performance-problems)
+- [Diagnostic Tools](#diagnostic-tools)
 
 ---
 
-## Problemas de Instalación
+## Installation Problems
 
-### Error: `npm install` falla
+### Error: `npm install` fails
 
-**Síntoma:**
+**Symptom:**
 ```
 npm ERR! code ENOENT
 npm ERR! syscall open
 ```
 
-**Causa:** No estás en el directorio correcto o no existe `package.json`
+**Cause:** You're not in the correct directory or `package.json` doesn't exist
 
-**Solución:**
+**Solution:**
 ```bash
 # Windows
-cd C:\ruta\a\bank-assistant
+cd C:\path\to\bank-assistant
 
 # Mac/Linux
-cd /ruta/a/bank-assistant
+cd /path/to/bank-assistant
 
-# Verificar que exista package.json
+# Verify that package.json exists
 dir  # Windows
 ls   # Mac/Linux
 ```
 
-### Error: Node.js no encontrado
+### Error: Node.js not found
 
-**Síntoma:**
+**Symptom:**
 ```
 'node' is not recognized as an internal or external command
 ```
 
-**Causa:** Node.js no está instalado o no está en el PATH
+**Cause:** Node.js is not installed or not in PATH
 
-**Solución:**
-1. Descarga Node.js: https://nodejs.org/
-2. Instala la versión LTS
-3. Reinicia la terminal
-4. Verifica: `node --version`
+**Solution:**
+1. Download Node.js: https://nodejs.org/
+2. Install the LTS version
+3. Restart the terminal
+4. Verify: `node --version`
 
-### Error al instalar dependencias específicas
+### Error installing specific dependencies
 
-**Síntoma:**
+**Symptom:**
 ```
 npm ERR! gyp ERR! build error
 ```
 
-**Causa:** Falta compilador C++ para módulos nativos
+**Cause:** Missing C++ compiler for native modules
 
-**Solución Windows:**
+**Windows Solution:**
 ```bash
 npm install --global windows-build-tools
 ```
 
-**Solución Mac:**
+**Mac Solution:**
 ```bash
 xcode-select --install
 ```
 
-**Solución Linux:**
+**Linux Solution:**
 ```bash
 sudo apt-get install build-essential
 ```
 
 ---
 
-## Problemas de Configuración
+## Configuration Problems
 
 ### Error: "Configuration incomplete"
 
-**Síntoma:**
+**Symptom:**
 ```
-Error: Configuración incompleta. Faltan las siguientes variables: email.user, email.password
+Error: Incomplete configuration. Missing the following variables: email.user, email.password
 ```
 
-**Causa:** Archivo `.env` no existe o está incompleto
+**Cause:** `.env` file doesn't exist or is incomplete
 
-**Solución:**
-1. Verifica que exista el archivo `.env` (con punto al inicio)
-2. Copia desde plantilla:
+**Solution:**
+1. Verify that the `.env` file exists (with dot at the beginning)
+2. Copy from template:
    ```bash
    # Windows
    copy config.example.env .env
@@ -97,113 +97,113 @@ Error: Configuración incompleta. Faltan las siguientes variables: email.user, e
    # Mac/Linux
    cp config.example.env .env
    ```
-3. Edita `.env` con tus datos
-4. Verifica con: `npm run check`
+3. Edit `.env` with your data
+4. Verify with: `npm run check`
 
-### Error: No se carga el archivo .env
+### Error: .env file not loading
 
-**Síntoma:** Las variables están en `.env` pero el sistema dice que faltan
+**Symptom:** Variables are in `.env` but system says they're missing
 
-**Causa:** Nombre incorrecto del archivo
+**Cause:** Incorrect file name
 
-**Solución:**
+**Solution:**
 ```bash
-# El archivo debe llamarse EXACTAMENTE .env
-# NO .env.txt
-# NO env
-# NO .env.example
+# The file must be named EXACTLY .env
+# NOT .env.txt
+# NOT env
+# NOT .env.example
 
-# Windows - ver archivos ocultos:
-# Explorador → Ver → Opciones → Ver → Mostrar archivos ocultos
+# Windows - show hidden files:
+# Explorer → View → Options → View → Show hidden files
 
-# Renombrar si es necesario:
+# Rename if necessary:
 ren env .env           # Windows
 mv env .env            # Mac/Linux
 ```
 
-### Variables de entorno no se reconocen
+### Environment variables not recognized
 
-**Síntoma:** `undefined` en lugar de valores
+**Symptom:** `undefined` instead of values
 
-**Causa:** Formato incorrecto en `.env`
+**Cause:** Incorrect format in `.env`
 
-**Solución:**
+**Solution:**
 ```env
-# ❌ INCORRECTO:
-EMAIL_USER = mi_email@gmail.com    # NO spaces around =
-EMAIL_USER="mi_email@gmail.com"    # NO quotes unless needed
+# INCORRECT:
+EMAIL_USER = my_email@gmail.com    # NO spaces around =
+EMAIL_USER="my_email@gmail.com"    # NO quotes unless needed
 EMAIL_USER                          # NO missing value
 
-# ✅ CORRECTO:
-EMAIL_USER=mi_email@gmail.com
+# CORRECT:
+EMAIL_USER=my_email@gmail.com
 EMAIL_PASSWORD=abcd efgh ijkl mnop
 ```
 
 ---
 
-## Problemas de Conexión
+## Connection Problems
 
 ### Error: "Invalid credentials"
 
-**Síntoma:**
+**Symptom:**
 ```
 Error: Invalid credentials (Failure)
 ```
 
-**Diagnóstico:**
+**Diagnosis:**
 ```bash
-# Verificar configuración
+# Verify configuration
 npm run check
 ```
 
-**Causas y Soluciones:**
+**Causes and Solutions:**
 
-#### 1. Gmail sin contraseña de aplicación
+#### 1. Gmail without app password
 ```env
-# ❌ INCORRECTO:
-EMAIL_PASSWORD=mi_contraseña_normal
+# INCORRECT:
+EMAIL_PASSWORD=my_normal_password
 
-# ✅ CORRECTO:
-EMAIL_PASSWORD=abcd efgh ijkl mnop  # 16 caracteres
+# CORRECT:
+EMAIL_PASSWORD=abcd efgh ijkl mnop  # 16 characters
 ```
 
-**Cómo obtener contraseña de aplicación:**
+**How to get app password:**
 1. https://myaccount.google.com/security
-2. Habilitar verificación en dos pasos
-3. Buscar "Contraseñas de aplicaciones"
-4. Generar nueva para "Correo"
-5. Copiar los 16 caracteres
+2. Enable 2-Step Verification
+3. Search for "App passwords"
+4. Generate new one for "Mail"
+5. Copy the 16 characters
 
-#### 2. Usuario incorrecto
+#### 2. Incorrect username
 ```env
-# ✅ CORRECTO - email completo:
-EMAIL_USER=juan.perez@gmail.com
+# CORRECT - complete email:
+EMAIL_USER=john.doe@gmail.com
 
-# ❌ INCORRECTO - sin dominio:
-EMAIL_USER=juan.perez
+# INCORRECT - without domain:
+EMAIL_USER=john.doe
 ```
 
-#### 3. IMAP no habilitado en Gmail
-**Solución:**
-1. Gmail → ⚙️ → Ver toda la configuración
-2. "Reenvío y correo POP/IMAP"
-3. "Habilitar IMAP"
-4. Guardar cambios
+#### 3. IMAP not enabled in Gmail
+**Solution:**
+1. Gmail → → See all settings
+2. "Forwarding and POP/IMAP"
+3. "Enable IMAP"
+4. Save changes
 
 ### Error: "Connection timeout"
 
-**Síntoma:**
+**Symptom:**
 ```
 Error: connect ETIMEDOUT
 ```
 
-**Causas y Soluciones:**
+**Causes and Solutions:**
 
-#### 1. Firewall/Antivirus bloqueando
-- Agrega excepción para Node.js
-- Permite conexiones IMAP (puerto 993)
+#### 1. Firewall/Antivirus blocking
+- Add exception for Node.js
+- Allow IMAP connections (port 993)
 
-#### 2. Host/Puerto incorrecto
+#### 2. Incorrect Host/Port
 ```env
 # Gmail
 EMAIL_HOST=imap.gmail.com
@@ -218,46 +218,46 @@ EMAIL_HOST=imap.mail.yahoo.com
 EMAIL_PORT=993
 ```
 
-#### 3. Sin conexión a internet
+#### 3. No internet connection
 ```bash
-# Probar conexión
+# Test connection
 ping google.com
 ```
 
 ### Error: "Certificate has expired"
 
-**Síntoma:**
+**Symptom:**
 ```
 Error: certificate has expired
 ```
 
-**Solución temporal:**
+**Temporary Solution:**
 ```javascript
-// En src/services/emailService.js, línea ~20:
+// In src/services/emailService.js, line ~20:
 tlsOptions: { rejectUnauthorized: false }
 ```
 
-**Solución permanente:**
-- Actualiza Node.js a la última versión
+**Permanent Solution:**
+- Update Node.js to the latest version
 
 ---
 
-## Problemas de Procesamiento
+## Processing Problems
 
-### No encuentra correos del banco
+### Doesn't find bank emails
 
-**Síntoma:** Sistema dice "No se encontraron correos nuevos"
+**Symptom:** System says "No new emails found"
 
-**Diagnóstico:**
+**Diagnosis:**
 ```bash
-# 1. Verificar configuración
+# 1. Verify configuration
 npm run check
 
-# 2. Ver nivel debug
-# En .env:
+# 2. See debug level
+# In .env:
 LOG_LEVEL=debug
 
-# 3. Revisar logs
+# 3. Check logs
 # Windows:
 type logs\combined.log
 
@@ -265,139 +265,139 @@ type logs\combined.log
 cat logs/combined.log
 ```
 
-**Causas y Soluciones:**
+**Causes and Solutions:**
 
-#### 1. Remitente incorrecto
+#### 1. Incorrect sender
 ```bash
-# Verificar email EXACTO del banco
-# Abrir correo → Ver detalles → De:
+# Verify EXACT bank email
+# Open email → See details → From:
 ```
 
 ```env
-# ✅ CORRECTO - email completo:
-BANK_EMAIL_SENDER=notificaciones@banamex.com
+# CORRECT - complete email:
+BANK_EMAIL_SENDER=notifications@banamex.com
 
-# ❌ INCORRECTO - parcial:
+# INCORRECT - partial:
 BANK_EMAIL_SENDER=banamex.com
 ```
 
-#### 2. Palabras clave no coinciden
+#### 2. Keywords don't match
 ```env
-# Ver el asunto real del correo y agregar palabras clave:
-EMAIL_SUBJECT_KEYWORDS=estado de cuenta,tarjeta,credit card,estado cuenta
+# See the actual email subject and add keywords:
+EMAIL_SUBJECT_KEYWORDS=statement,card,credit card,account statement
 ```
 
-#### 3. Correos ya marcados como leídos
-**Solución:** Marca un correo como no leído en tu bandeja
+#### 3. Emails already marked as read
+**Solution:** Mark an email as unread in your inbox
 
-#### 4. Correos en otra carpeta
+#### 4. Emails in another folder
 ```env
-# Por defecto busca en INBOX
-# Si están en otra carpeta:
-EMAIL_FOLDER=Promociones
-EMAIL_FOLDER=Bandeja de entrada
+# By default searches in INBOX
+# If they're in another folder:
+EMAIL_FOLDER=Promotions
+EMAIL_FOLDER=Inbox
 ```
 
-### PDF no tiene adjuntos
+### PDF has no attachments
 
-**Síntoma:** "No se encontraron PDFs en el correo"
+**Symptom:** "No PDFs found in email"
 
-**Causas:**
-- El estado de cuenta está en el cuerpo del correo, no adjunto
-- El adjunto no es PDF (puede ser imagen o link)
+**Causes:**
+- The statement is in the email body, not attached
+- The attachment is not PDF (could be image or link)
 
-**Solución:** Verifica que el correo realmente tenga un PDF adjunto
+**Solution:** Verify that the email actually has a PDF attachment
 
-### No extrae información del PDF
+### Doesn't extract information from PDF
 
-**Síntoma:** "No se encontró información de pago de contado"
+**Symptom:** "Cash payment information not found"
 
-**Diagnóstico:**
+**Diagnosis:**
 ```javascript
-// Ver texto extraído en logs:
+// See extracted text in logs:
 LOG_LEVEL=debug
 ```
 
-**Causas y Soluciones:**
+**Causes and Solutions:**
 
-#### 1. PDF es imagen escaneada
-**Causa:** El PDF no tiene texto, es una imagen
+#### 1. PDF is scanned image
+**Cause:** The PDF doesn't have text, it's an image
 
-**Identificar:**
-- Abre el PDF
-- Intenta seleccionar texto
-- Si no puedes, es imagen
+**Identify:**
+- Open the PDF
+- Try to select text
+- If you can't, it's an image
 
-**Solución:** Actualmente no hay soporte para OCR (próximamente)
+**Solution:** Currently no OCR support (coming soon)
 
-#### 2. Formato del banco diferente
-**Causa:** Los patrones no coinciden con tu banco
+#### 2. Different bank format
+**Cause:** Patterns don't match your bank
 
-**Solución:**
-1. Revisa el texto en `logs/combined.log`
-2. Busca manualmente el pago de contado
-3. Edita `src/services/parserService.js`
-4. Agrega tu patrón:
+**Solution:**
+1. Check the text in `logs/combined.log`
+2. Manually find the cash payment
+3. Edit `src/services/parserService.js`
+4. Add your pattern:
 
 ```javascript
 pagoContado: [
   /pago\s+(?:de\s+)?contado[:\s]+(?:[$]|MXN|USD)?\s*([\d,]+\.?\d*)/gi,
-  // Agrega tu patrón aquí:
-  /tu\s+patrón\s+personalizado/gi,
+  // Add your pattern here:
+  /your\s+custom\s+pattern/gi,
 ],
 ```
 
-#### 3. PDF encriptado/protegido
-**Solución:** No hay soporte actual para PDFs protegidos
+#### 3. Encrypted/protected PDF
+**Solution:** No current support for protected PDFs
 
-### Error al guardar archivos
+### Error saving files
 
-**Síntoma:**
+**Symptom:**
 ```
 Error: EACCES: permission denied
 ```
 
-**Causa:** Sin permisos en carpeta
+**Cause:** No permissions in folder
 
-**Solución:**
+**Solution:**
 ```bash
-# Windows - ejecutar como administrador
+# Windows - run as administrator
 
-# Mac/Linux - dar permisos:
+# Mac/Linux - give permissions:
 chmod -R 755 downloads/
 chmod -R 755 logs/
 ```
 
 ---
 
-## Problemas de Performance
+## Performance Problems
 
-### Uso alto de CPU
+### High CPU usage
 
-**Causa:** Procesamiento de PDFs grandes
+**Cause:** Processing large PDFs
 
-**Solución:**
+**Solution:**
 ```env
-# Reducir frecuencia de revisión
+# Reduce check frequency
 CHECK_INTERVAL_MINUTES=15
 ```
 
-### Uso alto de memoria
+### High memory usage
 
-**Causa:** PDFs muy grandes en memoria
+**Cause:** Very large PDFs in memory
 
-**Normal:** Temporal durante procesamiento
+**Normal:** Temporary during processing
 
-**Solución si persiste:**
-- Cerrar otros programas
-- Aumentar RAM del sistema
-- Procesar PDFs de menor tamaño
+**Solution if persists:**
+- Close other programs
+- Increase system RAM
+- Process smaller PDFs
 
-### Sistema muy lento
+### Very slow system
 
-**Diagnóstico:**
+**Diagnosis:**
 ```bash
-# Ver uso de recursos
+# See resource usage
 # Windows:
 taskmgr
 
@@ -408,59 +408,59 @@ Activity Monitor
 top
 ```
 
-**Soluciones:**
-- Aumentar `CHECK_INTERVAL_MINUTES`
-- Verificar que no haya múltiples instancias corriendo
-- Reiniciar el sistema
+**Solutions:**
+- Increase `CHECK_INTERVAL_MINUTES`
+- Verify no multiple instances running
+- Restart the system
 
 ---
 
-## Herramientas de Diagnóstico
+## Diagnostic Tools
 
-### 1. Verificar Configuración
+### 1. Verify Configuration
 
 ```bash
 npm run check
 ```
 
-Verifica que todas las variables estén correctas.
+Verifies that all variables are correct.
 
-### 2. Ver Logs Detallados
+### 2. See Detailed Logs
 
 ```bash
-# Cambiar nivel de log
-# En .env:
+# Change log level
+# In .env:
 LOG_LEVEL=debug
 
-# Ver logs en tiempo real (Windows):
+# See logs in real time (Windows):
 Get-Content logs\combined.log -Wait
 
 # Mac/Linux:
 tail -f logs/combined.log
 ```
 
-### 3. Probar Conexión IMAP Manualmente
+### 3. Test IMAP Connection Manually
 
-Crea `test-imap.js`:
+Create `test-imap.js`:
 
 ```javascript
 import Imap from 'imap';
 
 const imap = new Imap({
-  user: 'tu_email@gmail.com',
-  password: 'tu_password',
+  user: 'your_email@gmail.com',
+  password: 'your_password',
   host: 'imap.gmail.com',
   port: 993,
   tls: true,
 });
 
 imap.once('ready', () => {
-  console.log('✅ Conexión exitosa!');
+  console.log('Connection successful!');
   imap.end();
 });
 
 imap.once('error', (err) => {
-  console.error('❌ Error:', err.message);
+  console.error('Error:', err.message);
 });
 
 imap.connect();
@@ -470,19 +470,19 @@ imap.connect();
 node test-imap.js
 ```
 
-### 4. Probar Extracción de PDF
+### 4. Test PDF Extraction
 
-Crea `test-pdf.js`:
+Create `test-pdf.js`:
 
 ```javascript
 import pdf from 'pdf-parse';
 import { readFileSync } from 'fs';
 
-const dataBuffer = readFileSync('ruta/a/tu/estado.pdf');
+const dataBuffer = readFileSync('path/to/your/statement.pdf');
 
 pdf(dataBuffer).then((data) => {
-  console.log('Páginas:', data.numpages);
-  console.log('Texto:', data.text.substring(0, 500));
+  console.log('Pages:', data.numpages);
+  console.log('Text:', data.text.substring(0, 500));
 });
 ```
 
@@ -490,9 +490,9 @@ pdf(dataBuffer).then((data) => {
 node test-pdf.js
 ```
 
-### 5. Ver Variables de Entorno Cargadas
+### 5. View Loaded Environment Variables
 
-Crea `test-env.js`:
+Create `test-env.js`:
 
 ```javascript
 import dotenv from 'dotenv';
@@ -501,7 +501,7 @@ dotenv.config();
 console.log('EMAIL_USER:', process.env.EMAIL_USER);
 console.log('EMAIL_HOST:', process.env.EMAIL_HOST);
 console.log('BANK_EMAIL_SENDER:', process.env.BANK_EMAIL_SENDER);
-// NO imprimas EMAIL_PASSWORD por seguridad
+// DON'T print EMAIL_PASSWORD for security
 ```
 
 ```bash
@@ -510,44 +510,43 @@ node test-env.js
 
 ---
 
-## Checklist de Diagnóstico
+## Diagnostic Checklist
 
-Cuando tengas un problema, sigue este orden:
+When you have a problem, follow this order:
 
-- [ ] 1. ¿Node.js está instalado? `node --version`
-- [ ] 2. ¿Dependencias instaladas? `npm install`
-- [ ] 3. ¿Archivo `.env` existe y está completo? `npm run check`
-- [ ] 4. ¿Hay errores en los logs? Revisar `logs/error.log`
-- [ ] 5. ¿La conexión funciona? Verificar credenciales
-- [ ] 6. ¿Los correos existen? Verificar bandeja
-- [ ] 7. ¿El PDF tiene texto? Intentar seleccionar texto en el PDF
-
----
-
-## Obtener Ayuda
-
-Si ninguna solución funciona:
-
-1. **Recopila información:**
-   - Versión de Node.js: `node --version`
-   - Sistema operativo
-   - Contenido de `logs/error.log` (sin contraseñas)
-   - Pasos exactos para reproducir
-
-2. **Busca problemas similares:**
-   - Revisa FAQ.md
-   - Busca en GitHub Issues
-
-3. **Crea un Issue:**
-   - Incluye toda la información recopilada
-   - Describe el problema claramente
-   - Incluye logs relevantes (SIN contraseñas ni información sensible)
+- [ ] 1. Is Node.js installed? `node --version`
+- [ ] 2. Dependencies installed? `npm install`
+- [ ] 3. Does `.env` file exist and is complete? `npm run check`
+- [ ] 4. Are there errors in logs? Check `logs/error.log`
+- [ ] 5. Does connection work? Verify credentials
+- [ ] 6. Do emails exist? Check inbox
+- [ ] 7. Does PDF have text? Try to select text in the PDF
 
 ---
 
-**¿El problema persiste?** Abre un issue en GitHub con:
-- Descripción del problema
-- Logs relevantes (sin info sensible)
-- Sistema operativo y versión de Node.js
-- Pasos para reproducir
+## Get Help
 
+If no solution works:
+
+1. **Collect information:**
+   - Node.js version: `node --version`
+   - Operating system
+   - Content of `logs/error.log` (without passwords)
+   - Exact steps to reproduce
+
+2. **Search for similar issues:**
+   - Check FAQ.md
+   - Search in GitHub Issues
+
+3. **Create an Issue:**
+   - Include all collected information
+   - Describe the problem clearly
+   - Include relevant logs (WITHOUT passwords or sensitive information)
+
+---
+
+**Problem persists?** Open an issue on GitHub with:
+- Problem description
+- Relevant logs (without sensitive info)
+- Operating system and Node.js version
+- Steps to reproduce

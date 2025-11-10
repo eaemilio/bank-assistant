@@ -1,236 +1,236 @@
-# 🏦 Automatización de Estados de Cuenta Bancarios
+# Bank Statement Automation
 
-Sistema automatizado para procesar estados de cuenta de tarjetas de crédito recibidos por correo electrónico. El sistema monitorea tu bandeja de entrada, extrae los PDFs de estados de cuenta y encuentra automáticamente la información de pago de contado.
+Automated system to process credit card statements received by email. The system monitors your inbox, extracts statement PDFs and automatically finds cash payment information.
 
-## 🌟 Modos de Operación
+## Operating Modes
 
-### 🖥️ Modo Local
-Ejecuta el sistema continuamente en tu computadora. Ideal para pruebas y desarrollo.
+### Local Mode
+Run the system continuously on your computer. Ideal for testing and development.
 
-### ☁️ Modo Cloud (AWS Lambda)
-Ejecuta el sistema automáticamente en la nube sin mantener servidores. **¡GRATIS!** ($0/mes usando el free tier de AWS)
+### Cloud Mode (AWS Lambda)
+Run the system automatically in the cloud without maintaining servers. **FREE!** ($0/month using AWS free tier)
 
-**[→ Desplegar a AWS Lambda en 5 minutos](AWS_LAMBDA_QUICKSTART.md)**
+**[→ Deploy to AWS Lambda in 5 minutes](AWS_LAMBDA_QUICKSTART.md)**
 
-## 🎯 Características
+## Features
 
-- ✉️ **Monitoreo automático de correos** - Revisa tu bandeja de entrada periódicamente
-- 📎 **Extracción de PDFs** - Detecta y descarga archivos PDF adjuntos
-- 🔍 **Análisis inteligente** - Extrae información clave del estado de cuenta:
-  - Pago de contado (USD y GTQ)
-  - Fecha de pago
-  - Últimos 4 dígitos de tarjeta
-  - Saldo total
-  - Número de cuenta
-  - Período del estado de cuenta
-- 💾 **Guardado de resultados** - Almacena PDFs y resultados en formato JSON
-- 🗂️ **Integración con Notion** - Guarda automáticamente la información en tu base de datos de Notion
-- 📊 **Logging completo** - Sistema de logs detallado para seguimiento
-- 💱 **Soporte multi-moneda** - MXN, USD, GTQ y más
-- 🏦 **Sistema modular por banco** - Detección automática y estrategias específicas por banco
-- 🎨 **Abstract Factory Pattern** - Arquitectura profesional y escalable
-- ☁️ **Despliegue en la nube** - Soporte completo para AWS Lambda (serverless)
+- **Automatic email monitoring** - Checks your inbox periodically
+- **PDF extraction** - Detects and downloads attached PDF files
+- **Intelligent analysis** - Extracts key information from the statement:
+  - Cash payment (USD and GTQ)
+  - Payment date
+  - Last 4 digits of card
+  - Total balance
+  - Account number
+  - Statement period
+- **Result storage** - Stores PDFs and results in JSON format
+- **Notion integration** - Automatically saves information to your Notion database
+- **Complete logging** - Detailed logging system for tracking
+- **Multi-currency support** - MXN, USD, GTQ and more
+- **Modular system per bank** - Automatic detection and bank-specific strategies
+- **Abstract Factory Pattern** - Professional and scalable architecture
+- **Cloud deployment** - Full support for AWS Lambda (serverless)
 
-## 📋 Requisitos Previos
+## Prerequisites
 
-- Node.js 18 o superior
-- Cuenta de correo electrónico con acceso IMAP habilitado
-- Estados de cuenta bancarios en formato PDF
-- (Opcional) Cuenta de Notion para guardar datos automáticamente
+- Node.js 18 or higher
+- Email account with IMAP access enabled
+- Bank statements in PDF format
+- (Optional) Notion account to automatically save data
 
-## 🚀 Inicio Rápido
+## Quick Start
 
-### Opción 1: AWS Lambda (Recomendado para Producción) ☁️
+### Option 1: AWS Lambda (Recommended for Production)
 
-**¿Por qué AWS Lambda?**
-- ✅ Gratis (free tier de AWS)
-- ✅ Sin mantenimiento de servidores
-- ✅ Altamente disponible
-- ✅ Logs centralizados
+**Why AWS Lambda?**
+- Gratuitous (AWS free tier)
+- No server maintenance
+- Highly available
+- Centralized logs
 
-**Guías disponibles:**
-- 📖 [Guía Rápida de 5 minutos](AWS_LAMBDA_QUICKSTART.md) - Empezar ahora
-- 🔐 [Configurar Usuario IAM](AWS_IAM_SETUP.md) - Permisos necesarios
-- 📚 [Guía Completa de Despliegue](DEPLOYMENT.md) - Documentación detallada
+**Available guides:**
+- [5-minute Quick Guide](AWS_LAMBDA_QUICKSTART.md) - Start now
+- [Configure IAM User](AWS_IAM_SETUP.md) - Required permissions
+- [Complete Deployment Guide](DEPLOYMENT.md) - Detailed documentation
 
-### Opción 2: Ejecución Local 🖥️
+### Option 2: Local Execution
 
-## 🚀 Instalación Local
+## Local Installation
 
-1. **Clonar o descargar el proyecto**
+1. **Clone or download the project**
 
 ```bash
 cd bank-assistant
 ```
 
-2. **Instalar dependencias**
+2. **Install dependencies**
 
 ```bash
 npm install
 ```
 
-3. **Configurar variables de entorno**
+3. **Configure environment variables**
 
-Copia el archivo de plantilla y edita con tus datos:
+Copy the template file and edit with your data:
 
 ```bash
 copy .env.template .env
 ```
 
-Edita el archivo `.env` con tu editor de texto favorito y configura:
+Edit the `.env` file with your favorite text editor and configure:
 
 ```env
-# Configuración del Correo Electrónico
-EMAIL_USER=tu_email@gmail.com
-EMAIL_PASSWORD=tu_contraseña
+# Email Configuration
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_password
 EMAIL_HOST=imap.gmail.com
 EMAIL_PORT=993
 EMAIL_TLS=true
 
-# Remitente del banco
-BANK_EMAIL_SENDER=notificaciones@banco.com
+# Bank sender
+BANK_EMAIL_SENDER=notifications@bank.com
 
-# Palabras clave para identificar estados de cuenta
-EMAIL_SUBJECT_KEYWORDS=estado de cuenta,state,tarjeta de credito
+# Keywords to identify statements
+EMAIL_SUBJECT_KEYWORDS=statement,state,credit card
 ```
 
-## 🔐 Configuración de Gmail
+## Gmail Configuration
 
-Si usas Gmail, necesitas habilitar el acceso IMAP y crear una contraseña de aplicación:
+If you use Gmail, you need to enable IMAP access and create an app password:
 
-### 1. Habilitar IMAP
+### 1. Enable IMAP
 
-1. Ve a Gmail → Configuración (⚙️) → Ver toda la configuración
-2. Pestaña "Reenvío y correo POP/IMAP"
-3. Habilita "Habilitar IMAP"
-4. Guarda los cambios
+1. Go to Gmail → Settings → View all settings
+2. "Forwarding and POP/IMAP" tab
+3. Enable "Enable IMAP"
+4. Save changes
 
-### 2. Crear Contraseña de Aplicación
+### 2. Create App Password
 
-1. Ve a tu cuenta de Google: https://myaccount.google.com/
-2. Seguridad → Verificación en dos pasos (debe estar activada)
-3. Contraseñas de aplicaciones
-4. Selecciona "Correo" y "Otro dispositivo personalizado"
-5. Copia la contraseña generada (16 caracteres)
-6. Úsala en `EMAIL_PASSWORD` en tu archivo `.env`
+1. Go to your Google account: https://myaccount.google.com/
+2. Security → 2-Step Verification (must be activated)
+3. App passwords
+4. Select "Mail" and "Other custom device"
+5. Copy the generated password (16 characters)
+6. Use it in `EMAIL_PASSWORD` in your `.env` file
 
-## 🗂️ Configuración de Notion (Opcional)
+## Notion Configuration (Optional)
 
-Para guardar automáticamente la información en una base de datos de Notion:
+To automatically save information to a Notion database:
 
-1. **Sigue la guía completa en:** [NOTION_SETUP.md](NOTION_SETUP.md)
-2. **Agrega a tu `.env`:**
+1. **Follow the complete guide at:** [NOTION_SETUP.md](NOTION_SETUP.md)
+2. **Add to your `.env`:**
    ```env
-   NOTION_API_KEY=secret_tu_api_key
-   NOTION_DATABASE_ID=tu_database_id
+   NOTION_API_KEY=secret_your_api_key
+   NOTION_DATABASE_ID=your_database_id
    ```
-3. **Prueba la conexión:**
+3. **Test the connection:**
    ```bash
    npm run test:notion
    ```
 
-**Información que se guarda en Notion:**
-- 📅 Fecha de pago
-- 💵 Pago Contado USD
-- 💰 Pago Contado GTQ
-- 💳 Últimos 4 dígitos de tarjeta
+**Information saved to Notion:**
+- Payment date
+- Cash Payment USD
+- Cash Payment GTQ
+- Last 4 digits of card
 
-> **Nota:** La integración con Notion es opcional. Si no configuras las variables, la aplicación funcionará normalmente guardando solo los archivos JSON locales.
+> **Note:** Notion integration is optional. If you don't configure the variables, the application will work normally saving only local JSON files.
 
-## ⚙️ Configuración para Otros Bancos
+## Configuration for Other Banks
 
-### Configurar el Remitente del Banco
+### Configure Bank Sender
 
-Necesitas identificar desde qué dirección de correo tu banco envía los estados de cuenta:
+You need to identify from which email address your bank sends statements:
 
-1. Abre un correo de estado de cuenta de tu banco
-2. Mira la dirección del remitente (ej: `notificaciones@banamex.com`)
-3. Configúralo en `.env`:
-
-```env
-BANK_EMAIL_SENDER=notificaciones@tuBanco.com
-```
-
-### Configurar Palabras Clave
-
-Configura las palabras que aparecen en el asunto de los correos:
+1. Open a bank statement email from your bank
+2. Look at the sender address (e.g.: `notifications@banamex.com`)
+3. Configure it in `.env`:
 
 ```env
-EMAIL_SUBJECT_KEYWORDS=estado de cuenta,tarjeta,credit card
+BANK_EMAIL_SENDER=notifications@yourBank.com
 ```
 
-## 🎮 Uso
+### Configure Keywords
 
-### Modo Normal
+Configure the words that appear in the email subject:
+
+```env
+EMAIL_SUBJECT_KEYWORDS=statement,card,credit card
+```
+
+## Usage
+
+### Normal Mode
 
 ```bash
 npm start
 ```
 
-El sistema:
-1. Se conecta a tu correo
-2. Busca correos no leídos del banco
-3. Procesa los PDFs adjuntos
-4. Extrae la información de pago
-5. Guarda los resultados localmente (JSON)
-6. Guarda en Notion (si está configurado)
-7. Marca los correos como leídos
-8. Repite el proceso cada X minutos (configurado en `.env`)
+The system:
+1. Connects to your email
+2. Searches for unread emails from the bank
+3. Processes attached PDFs
+4. Extracts payment information
+5. Saves results locally (JSON)
+6. Saves to Notion (if configured)
+7. Marks emails as read
+8. Repeats the process every X minutes (configured in `.env`)
 
-### Modo Desarrollo (con auto-reinicio)
+### Development Mode (with auto-restart)
 
 ```bash
 npm run dev
 ```
 
-### Detener el Sistema
+### Stop the System
 
-Presiona `Ctrl + C` en la terminal
+Press `Ctrl + C` in the terminal
 
-## 📁 Estructura del Proyecto
+## Project Structure
 
 ```
 bank-assistant/
 ├── src/
 │   ├── config/
-│   │   └── config.js          # Configuración de la aplicación
+│   │   └── config.js          # Application configuration
 │   ├── services/
-│   │   ├── emailService.js    # Servicio de correo electrónico
-│   │   ├── pdfService.js      # Servicio de procesamiento de PDFs
-│   │   ├── parserService.js   # Servicio de análisis de texto
-│   │   └── notionService.js   # Servicio de integración con Notion
+│   │   ├── emailService.js    # Email service
+│   │   ├── pdfService.js      # PDF processing service
+│   │   ├── parserService.js   # Text analysis service
+│   │   └── notionService.js   # Notion integration service
 │   ├── utils/
-│   │   └── logger.js          # Sistema de logging
-│   └── index.js               # Archivo principal
-├── downloads/                  # PDFs y resultados descargados
-├── logs/                       # Archivos de log
-├── .env                        # Variables de entorno (no incluir en git)
-├── .env.template              # Plantilla de configuración
+│   │   └── logger.js          # Logging system
+│   └── index.js               # Main file
+├── downloads/                  # Downloaded PDFs and results
+├── logs/                       # Log files
+├── .env                        # Environment variables (do not include in git)
+├── .env.template              # Configuration template
 ├── .gitignore
 ├── package.json
 └── README.md
 ```
 
-## 📄 Salida de Resultados
+## Result Output
 
-Cada estado de cuenta procesado genera dos archivos en la carpeta `downloads/`:
+Each processed statement generates two files in the `downloads/` folder:
 
-### 1. PDF Original
+### 1. Original PDF
 ```
-[timestamp]_estado_cuenta.pdf
+[timestamp]_statement.pdf
 ```
 
-### 2. Resultados en JSON
+### 2. Results in JSON
 ```json
 {
   "email": {
-    "subject": "Tu Estado de Cuenta",
-    "from": "banco@example.com",
+    "subject": "Your Statement",
+    "from": "bank@example.com",
     "date": "2024-11-06T12:00:00.000Z"
   },
   "pdf": {
-    "filename": "estado_cuenta.pdf",
-    "filepath": "./downloads/1234567890_estado_cuenta.pdf"
+    "filename": "statement.pdf",
+    "filepath": "./downloads/1234567890_statement.pdf"
   },
   "statement": {
     "found": true,
@@ -249,142 +249,141 @@ Cada estado de cuenta procesado genera dos archivos en la carpeta `downloads/`:
 }
 ```
 
-## 🔧 Personalización
+## Customization
 
-### Ajustar Patrones de Búsqueda
+### Adjust Search Patterns
 
-Si el sistema no encuentra la información correctamente, puedes ajustar los patrones de búsqueda en `src/services/parserService.js`:
+If the system doesn't find information correctly, you can adjust search patterns in `src/services/parserService.js`:
 
 ```javascript
 const patterns = {
   pagoContado: [
     /pago\s+(?:de\s+)?contado[:\s]+(?:[$]|MXN|USD)?\s*([\d,]+\.?\d*)/gi,
-    // Agrega tus propios patrones aquí
+    // Add your own patterns here
   ],
   // ...
 };
 ```
 
-### Cambiar Intervalo de Revisión
+### Change Check Interval
 
-En tu archivo `.env`:
+In your `.env` file:
 
 ```env
-# Revisar cada 5 minutos
+# Check every 5 minutes
 CHECK_INTERVAL_MINUTES=5
 
-# Revisar cada hora
+# Check every hour
 CHECK_INTERVAL_MINUTES=60
 ```
 
-## 📝 Logs
+## Logs
 
-Los logs se guardan en la carpeta `logs/`:
+Logs are saved in the `logs/` folder:
 
-- `combined.log` - Todos los eventos
-- `error.log` - Solo errores
+- `combined.log` - All events
+- `error.log` - Only errors
 
-También se muestran en la consola con colores.
+They are also displayed in the console with colors.
 
-## 🐛 Solución de Problemas
+## Troubleshooting
 
-### Error de Autenticación
+### Authentication Error
 
 ```
 Error: Invalid credentials
 ```
 
-**Solución:**
-- Verifica que `EMAIL_USER` y `EMAIL_PASSWORD` sean correctos
-- Si usas Gmail, usa una contraseña de aplicación, no tu contraseña normal
-- Verifica que la verificación en dos pasos esté activada (Gmail)
+**Solution:**
+- Verify that `EMAIL_USER` and `EMAIL_PASSWORD` are correct
+- If using Gmail, use an app password, not your normal password
+- Verify that 2-Step Verification is activated (Gmail)
 
-### No Encuentra Correos
+### Doesn't Find Emails
 
-**Solución:**
-- Verifica que `BANK_EMAIL_SENDER` sea correcto
-- Revisa las palabras clave en `EMAIL_SUBJECT_KEYWORDS`
-- Verifica que los correos no estén marcados como leídos
+**Solution:**
+- Verify that `BANK_EMAIL_SENDER` is correct
+- Check keywords in `EMAIL_SUBJECT_KEYWORDS`
+- Verify that emails are not marked as read
 
-### No Extrae la Información
+### Doesn't Extract Information
 
-**Solución:**
-- Revisa el log para ver el texto extraído del PDF
-- Ajusta los patrones de búsqueda en `parserService.js`
-- Algunos PDFs pueden tener formato de imagen y no texto (necesitarían OCR)
+**Solution:**
+- Check the log to see the text extracted from the PDF
+- Adjust search patterns in `parserService.js`
+- Some PDFs may have image format and not text (would need OCR)
 
-### Error al Conectar IMAP
+### Error Connecting IMAP
 
 ```
 Error: connect ECONNREFUSED
 ```
 
-**Solución:**
-- Verifica que `EMAIL_HOST` y `EMAIL_PORT` sean correctos
-- Verifica tu conexión a internet
-- Algunos proveedores pueden bloquear conexiones IMAP, contacta a tu proveedor
+**Solution:**
+- Verify that `EMAIL_HOST` and `EMAIL_PORT` are correct
+- Verify your internet connection
+- Some providers may block IMAP connections, contact your provider
 
-## 🔒 Seguridad
+## Security
 
-- **NUNCA** compartas tu archivo `.env`
-- **NUNCA** subas tu archivo `.env` a Git (está en `.gitignore`)
-- Usa contraseñas de aplicación en lugar de tu contraseña principal
-- Revisa periódicamente los accesos a tu cuenta de correo
+- **NEVER** share your `.env` file
+- **NEVER** upload your `.env` file to Git (it's in `.gitignore`)
+- Use app passwords instead of your main password
+- Periodically review access to your email account
 
-## 🏦 Agregar Soporte para Nuevos Bancos
+## Adding Support for New Banks
 
-El sistema cuenta con un **sistema modular de detección por banco** que permite agregar fácilmente soporte para nuevos bancos.
+The system has a **modular detection system per bank** that allows you to easily add support for new banks.
 
-### Bancos Actualmente Soportados
+### Currently Supported Banks
 
-- ✅ **Banco Promerica (Guatemala)** - Totalmente soportado con estrategia específica
-- 📋 **Otros bancos** - Usa estrategia genérica (puede requerir ajustes)
+- **Banco Promerica (Guatemala)** - Fully supported with specific strategy
+- **Other banks** - Uses generic strategy (may require adjustments)
 
-### Cómo Funciona
+### How It Works
 
-1. El sistema detecta automáticamente el banco del PDF
-2. Aplica la estrategia de extracción específica para ese banco
-3. Si no reconoce el banco, usa una estrategia genérica
+1. The system automatically detects the bank from the PDF
+2. Applies the specific extraction strategy for that bank
+3. If it doesn't recognize the bank, uses a generic strategy
 
-### Guía Completa
+### Complete Guide
 
-- **`BANKS.md`** - Guía para agregar bancos, ejemplos y troubleshooting
-- **`ARCHITECTURE_FACTORY.md`** - Documentación completa del patrón Abstract Factory implementado
+- **`BANKS.md`** - Guide to add banks, examples and troubleshooting
+- **`ARCHITECTURE_FACTORY.md`** - Complete documentation of implemented Abstract Factory pattern
 
-## 🚀 Mejoras Futuras
+## Future Improvements
 
-- [ ] Soporte para OCR en PDFs con imágenes
-- [ ] Notificaciones (email, SMS, webhook)
-- [ ] Base de datos para historial de pagos
-- [ ] Dashboard web para visualizar resultados
-- [ ] Soporte para múltiples bancos/cuentas
-- [ ] Integración con APIs de pago automático
-- [ ] Recordatorios de fechas de pago
+- [ ] OCR support for PDFs with images
+- [ ] Notifications (email, SMS, webhook)
+- [ ] Database for payment history
+- [ ] Web dashboard to visualize results
+- [ ] Support for multiple banks/accounts
+- [ ] Integration with automatic payment APIs
+- [ ] Payment date reminders
 
-## 📞 Soporte
+## Support
 
-Si encuentras problemas:
+If you encounter problems:
 
-1. Revisa los logs en la carpeta `logs/`
-2. Verifica tu configuración en `.env`
-3. Asegúrate de tener la última versión de Node.js
-4. Revisa que todas las dependencias estén instaladas: `npm install`
+1. Check the logs in the `logs/` folder
+2. Verify your configuration in `.env`
+3. Make sure you have the latest version of Node.js
+4. Check that all dependencies are installed: `npm install`
 
-## 📄 Licencia
+## License
 
 MIT
 
-## 🤝 Contribuciones
+## Contributions
 
-Las contribuciones son bienvenidas. Por favor:
+Contributions are welcome. Please:
 
-1. Haz un fork del proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+1. Fork the project
+2. Create a branch for your feature (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
-**Nota:** Este proyecto es para uso personal y educativo. Asegúrate de cumplir con los términos de servicio de tu proveedor de correo electrónico y las políticas de tu banco.
-
+**Note:** This project is for personal and educational use. Make sure to comply with your email provider's terms of service and your bank's policies.
