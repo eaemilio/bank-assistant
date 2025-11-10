@@ -174,6 +174,14 @@ async function processEmail(email, pdfService, parserService, notionService, ema
     await emailService.markAsRead(email.uid);
     logger.info('✅ Correo marcado como leído');
 
+    // Etiquetar y archivar el correo
+    try {
+      await emailService.labelAndArchive(email.uid, 'Bank Statements');
+      logger.info('🏷️  Correo etiquetado como "Bank Statements" y archivado');
+    } catch (error) {
+      logger.error('⚠️  Error al etiquetar/archivar (continuando):', error.message);
+    }
+
     return {
       success: true,
       email: email.subject,

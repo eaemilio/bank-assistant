@@ -23,6 +23,7 @@ Run the system automatically in the cloud without maintaining servers. **FREE!**
   - Total balance
   - Account number
   - Statement period
+- **Email organization** - Automatically labels processed emails as "Bank Statements" and archives them
 - **Result storage** - Stores PDFs and results in JSON format
 - **Notion integration** - Automatically saves information to your Notion database
 - **Complete logging** - Detailed logging system for tracking

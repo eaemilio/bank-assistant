@@ -128,6 +128,14 @@ class BankStatementAutomation {
       await this.emailService.markAsRead(email.uid);
       logger.info('✅ Correo marcado como leído');
 
+      // Etiquetar y archivar el correo
+      try {
+        await this.emailService.labelAndArchive(email.uid, 'Bank Statements');
+        logger.info('🏷️  Correo etiquetado como "Bank Statements" y archivado');
+      } catch (error) {
+        logger.error('⚠️  Error al etiquetar/archivar (continuando):', error.message);
+      }
+
     } catch (error) {
       logger.error(`❌ Error al procesar correo "${email.subject}":`, error);
     }

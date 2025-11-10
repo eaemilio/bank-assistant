@@ -314,4 +314,176 @@ export class EmailService {
       });
     });
   }
+
+  /**
+   * Agregar una etiqueta a un correo (Gmail)
+   * En Gmail, las etiquetas se manejan como carpetas IMAP
+   */
+  async addLabel(uid, labelName) {
+    return new Promise((resolve, reject) => {
+      if (!this.isConnected) {
+        reject(new Error('No hay conexión IMAP activa'));
+        return;
+      }
+
+      if (!uid) {
+        logger.error('UID no proporcionado para agregar etiqueta');
+        reject(new Error('UID no proporcionado'));
+        return;
+      }
+
+      // Abrir el buzón actual
+      this.imap.openBox(config.email.folder, false, (err, box) => {
+        if (err) {
+          logger.error('Error al abrir la carpeta:', err);
+          reject(err);
+          return;
+        }
+
+        // Buscar el mensaje por UID
+        this.imap.search([['UID', uid]], (searchErr, results) => {
+          if (searchErr) {
+            logger.error(`Error al buscar correo UID ${uid}:`, searchErr);
+            this.imap.closeBox(() => {});
+            reject(searchErr);
+            return;
+          }
+
+          if (!results || results.length === 0) {
+            logger.error(`No se encontró el correo con UID ${uid}`);
+            this.imap.closeBox(() => {});
+            reject(new Error(`Correo con UID ${uid} no encontrado`));
+            return;
+          }
+
+          // Copiar el mensaje a la etiqueta (carpeta)
+          this.imap.copy(results, labelName, (copyErr) => {
+            if (copyErr) {
+              // Si el error es porque la carpeta no existe, intentar crearla
+              if (copyErr.textCode === 'TRYCREATE' || copyErr.message.includes('does not exist')) {
+                logger.info(`Creando etiqueta "${labelName}"...`);
+                
+                this.imap.addBox(labelName, (addErr) => {
+                  if (addErr) {
+                    logger.error(`Error al crear etiqueta "${labelName}":`, addErr);
+                    this.imap.closeBox(() => {});
+                    reject(addErr);
+                    return;
+                  }
+
+                  // Intentar copiar nuevamente después de crear la carpeta
+                  this.imap.copy(results, labelName, (retryCopyErr) => {
+                    if (retryCopyErr) {
+                      logger.error(`Error al copiar mensaje a "${labelName}":`, retryCopyErr);
+                      this.imap.closeBox(() => {});
+                      reject(retryCopyErr);
+                    } else {
+                      logger.info(`Correo UID ${uid} etiquetado como "${labelName}"`);
+                      this.imap.closeBox(() => {});
+                      resolve();
+                    }
+                  });
+                });
+              } else {
+                logger.error(`Error al copiar mensaje a "${labelName}":`, copyErr);
+                this.imap.closeBox(() => {});
+                reject(copyErr);
+              }
+            } else {
+              logger.info(`Correo UID ${uid} etiquetado como "${labelName}"`);
+              this.imap.closeBox(() => {});
+              resolve();
+            }
+          });
+        });
+      });
+    });
+  }
+
+  /**
+   * Archivar un correo (moverlo fuera de INBOX)
+   * En Gmail, esto significa mover el correo a [Gmail]/All Mail
+   */
+  async archiveEmail(uid) {
+    return new Promise((resolve, reject) => {
+      if (!this.isConnected) {
+        reject(new Error('No hay conexión IMAP activa'));
+        return;
+      }
+
+      if (!uid) {
+        logger.error('UID no proporcionado para archivar');
+        reject(new Error('UID no proporcionado'));
+        return;
+      }
+
+      // Abrir el buzón INBOX
+      this.imap.openBox(config.email.folder, false, (err, box) => {
+        if (err) {
+          logger.error('Error al abrir la carpeta:', err);
+          reject(err);
+          return;
+        }
+
+        // Buscar el mensaje por UID
+        this.imap.search([['UID', uid]], (searchErr, results) => {
+          if (searchErr) {
+            logger.error(`Error al buscar correo UID ${uid}:`, searchErr);
+            this.imap.closeBox(() => {});
+            reject(searchErr);
+            return;
+          }
+
+          if (!results || results.length === 0) {
+            logger.error(`No se encontró el correo con UID ${uid}`);
+            this.imap.closeBox(() => {});
+            reject(new Error(`Correo con UID ${uid} no encontrado`));
+            return;
+          }
+
+          // Marcar el mensaje para eliminar de INBOX (archivar)
+          // En Gmail, esto lo mueve a [Gmail]/All Mail
+          this.imap.addFlags(results, ['\\Deleted'], (flagErr) => {
+            if (flagErr) {
+              logger.error(`Error al archivar correo UID ${uid}:`, flagErr);
+              this.imap.closeBox(() => {});
+              reject(flagErr);
+            } else {
+              // Expunge para aplicar los cambios
+              this.imap.expunge((expungeErr) => {
+                if (expungeErr) {
+                  logger.error(`Error al expunge correo UID ${uid}:`, expungeErr);
+                  this.imap.closeBox(() => {});
+                  reject(expungeErr);
+                } else {
+                  logger.info(`Correo UID ${uid} archivado`);
+                  this.imap.closeBox(() => {});
+                  resolve();
+                }
+              });
+            }
+          });
+        });
+      });
+    });
+  }
+
+  /**
+   * Etiquetar y archivar un correo en una sola operación
+   */
+  async labelAndArchive(uid, labelName = 'Bank Statements') {
+    try {
+      // Primero agregar la etiqueta
+      await this.addLabel(uid, labelName);
+      
+      // Luego archivar el correo
+      await this.archiveEmail(uid);
+      
+      logger.info(`Correo UID ${uid} etiquetado como "${labelName}" y archivado`);
+      return true;
+    } catch (error) {
+      logger.error(`Error al etiquetar y archivar correo UID ${uid}:`, error);
+      throw error;
+    }
+  }
 }
