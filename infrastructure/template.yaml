@@ -55,8 +55,8 @@ Parameters:
   
   ScheduleExpression:
     Type: String
-    Default: 'cron(0 * * * ? *)'
-    Description: EventBridge schedule expression (default every hour)
+    Default: 'cron(*/5 * * * ? *)'
+    Description: EventBridge schedule expression (default every 5 minutes)
 
 Resources:
   BankStatementFunction:
@@ -103,7 +103,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: !Ref ScheduleExpression
-            Description: Trigger bank statement processing every hour
+            Description: Trigger bank statement processing every 5 minutes
             Enabled: true
 
   BankStatementLogGroup:

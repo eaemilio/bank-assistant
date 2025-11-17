@@ -15,7 +15,6 @@ export class NotionService {
       this.notion = new Client({
         auth: config.notion.apiKey,
       });
-      logger.info('✅ Notion Service inicializado');
     } else {
       logger.warn('⚠️  Notion API key no configurada - el servicio no estará disponible');
     }

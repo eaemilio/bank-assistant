@@ -51,7 +51,6 @@ export class SSMTokenService {
     try {
       // Retornar del caché si está disponible y no ha expirado
       if (this.cachedToken && Date.now() < this.cacheExpiry) {
-        logger.debug('Token cargado desde caché');
         return this.cachedToken;
       }
 
@@ -68,7 +67,6 @@ export class SSMTokenService {
       }
 
       const token = JSON.parse(response.Parameter.Value);
-      logger.info('Token cargado desde SSM Parameter Store');
       
       // Actualizar caché
       this.cachedToken = token;

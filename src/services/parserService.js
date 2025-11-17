@@ -10,9 +10,7 @@ import { BankParserFactory } from '../parsers/BankParserFactory.js';
  */
 export class ParserService {
   constructor() {
-    // Inicializar la factory de parsers
     this.factory = new BankParserFactory();
-    logger.info('✅ Parser Service inicializado con Abstract Factory');
   }
 
   /**

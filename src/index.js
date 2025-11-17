@@ -24,22 +24,11 @@ class BankStatementAutomation {
     try {
       // Validar configuración
       validateConfig();
-      logger.info('✅ Configuración validada correctamente');
-
-      // Mostrar configuración
-      logger.info(`📧 Monitoreando: ${config.email.user}`);
-      logger.info(`🏦 Remitentes del banco (${config.bank.senderEmails.length}):`);
-      config.bank.senderEmails.forEach((email, index) => {
-        logger.info(`   ${index + 1}. ${email}`);
-      });
-      logger.info(`⏱️  Intervalo: cada ${config.app.checkIntervalMinutes} minuto(s)`);
-      logger.info('='.repeat(60));
 
       await this.emailService.connect();
       await this.processEmails();
 
       const cronExpression = `*/${config.app.checkIntervalMinutes} * * * *`;
-      logger.info(`⏰ Programando revisiones: ${cronExpression}`);
 
       cron.schedule(cronExpression, async () => {
         if (!this.isProcessing) {
@@ -49,9 +38,7 @@ class BankStatementAutomation {
         }
       });
 
-      logger.info('✅ Sistema iniciado correctamente');
       logger.info('🔄 Esperando nuevos estados de cuenta...');
-      logger.info('Presiona Ctrl+C para detener');
 
     } catch (error) {
       logger.error('❌ Error al iniciar la aplicación:', error);

@@ -14,24 +14,10 @@ export const handler = async (event, context) => {
   
   // Configurar context para que Lambda no espere el event loop vacío
   context.callbackWaitsForEmptyEventLoop = false;
-  
-  logger.info('='.repeat(60));
-  logger.info('🚀 Lambda function iniciada');
-  logger.info(`📅 Timestamp: ${new Date().toISOString()}`);
-  logger.info(`🆔 Request ID: ${context.requestId}`);
-  logger.info('='.repeat(60));
 
   try {
     // Validar configuración
     validateConfig();
-    logger.info('✅ Configuración validada correctamente');
-
-    // Mostrar configuración
-    logger.info(`📧 Monitoreando: ${config.email.user}`);
-    logger.info(`🏦 Remitentes del banco (${config.bank.senderEmails.length}):`);
-    config.bank.senderEmails.forEach((email, index) => {
-      logger.info(`   ${index + 1}. ${email}`);
-    });
 
     // Inicializar servicios
     // En Lambda, no guardamos archivos (saveFiles = false)
@@ -42,7 +28,6 @@ export const handler = async (event, context) => {
 
     // Conectar al correo
     await emailService.connect();
-    logger.info('📬 Buscando nuevos estados de cuenta...');
 
     // Buscar correos del banco
     const emails = await emailService.searchBankStatements();

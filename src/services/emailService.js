@@ -36,8 +36,6 @@ export class EmailService {
 
         // Si OAuth2 está habilitado, usar XOAUTH2
         if (config.email.useOAuth2 && this.oauth2Service) {
-          logger.info('Usando autenticación OAuth2...');
-          
           try {
             const xoauth2Token = await this.oauth2Service.getXOAuth2String(config.email.user);
             imapConfig.xoauth2 = xoauth2Token;
@@ -48,8 +46,6 @@ export class EmailService {
             return;
           }
         } else {
-          // Usar autenticación tradicional con contraseña
-          logger.info('Usando autenticación con contraseña...');
           imapConfig.password = config.email.password;
         }
 
@@ -471,7 +467,7 @@ export class EmailService {
   /**
    * Etiquetar y archivar un correo en una sola operación
    */
-  async labelAndArchive(uid, labelName = 'Bank Statements') {
+  async labelAndArchive(uid, labelName = 'Bank/Bank Statements') {
     try {
       // Primero agregar la etiqueta
       await this.addLabel(uid, labelName);

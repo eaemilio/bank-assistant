@@ -25,7 +25,6 @@ export class GmailOAuth2Service {
     this.useSSM = useSSM || process.env.USE_AWS_SSM === 'true' || process.env.AWS_EXECUTION_ENV !== undefined;
     
     if (this.useSSM) {
-      logger.info('Usando AWS SSM Parameter Store para tokens');
       this.tokenService = new SSMTokenService();
     } else {
       logger.info('Usando sistema de archivos local para tokens');
